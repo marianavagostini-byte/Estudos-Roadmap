@@ -1,0 +1,405 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dojo</title>
+<style>
+  :root{
+    --fundo:#151A21; --sup:#1D242D; --sup2:#232C37; --linha:#2E3944;
+    --texto:#E4E9EE; --fraco:#8697A6; --apagado:#5C6C7A;
+    --branca:#E8E4D9; --amarela:#E3B341; --azul:#4C8FD1; --roxa:#9B6FD4; --preta:#C9A227;
+    --poo:#D2544A; --sql:#2E9BA8; --dsa:#D19A2E; --road:#7A7FD6;
+    --ok:#3FA57A; --alerta:#D2544A;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--fundo);color:var(--texto);
+    font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .env{max-width:1180px;margin:0 auto;padding:24px 18px 80px}
+  h2{font:400 18px/1.2 Georgia,serif;margin:0 0 12px;letter-spacing:-.005em}
+  section{margin-bottom:28px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  /* FAIXA DE RANK */
+  .rank{display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+        background:var(--sup);border:1px solid var(--linha);padding:18px 20px;margin-bottom:26px}
+  .selo{width:74px;height:74px;flex:none;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;border:3px solid var(--rc);background:var(--fundo)}
+  .selo b{font:400 25px/1 Georgia,serif;color:var(--rc)}
+  .selo span{font-size:9.5px;color:var(--fraco);margin-top:3px;letter-spacing:.06em}
+  .rinfo{flex:1;min-width:240px}
+  .rinfo .t{font:400 21px/1.2 Georgia,serif;margin-bottom:3px}
+  .rinfo .p{font-size:12.5px;color:var(--fraco);margin-bottom:9px}
+  .trilho{height:7px;background:var(--sup2);overflow:hidden}
+  .trilho i{display:block;height:100%;background:var(--rc)}
+  .nums{display:flex;gap:26px}
+  .nums div{text-align:right}
+  .nums b{display:block;font:400 24px/1 Georgia,serif}
+  .nums span{font-size:10.5px;color:var(--fraco)}
+  .fogo b{color:var(--amarela)}
+
+  /* CARTOES */
+  .grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(236px,1fr));gap:11px}
+  .kata{background:var(--sup);border:1px solid var(--linha);border-top:3px solid var(--f);
+        padding:13px 15px;display:flex;flex-direction:column;gap:7px}
+  .kata .cab{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .kata .fr{font-size:11px;font-weight:600;color:var(--f)}
+  .kata .tp{font-weight:600;font-size:14.5px;line-height:1.3}
+  .kata .cr{font-size:12px;color:var(--fraco);line-height:1.45;flex:1}
+  .kata button{align-self:flex-start;font:inherit;font-size:12.5px;padding:6px 13px;cursor:pointer;
+        background:var(--f);color:#10151B;border:0;font-weight:600}
+  .kata button:hover{filter:brightness(1.15)}
+  .kyu{font-size:10px;font-weight:700;padding:2px 6px;color:#10151B;background:var(--k);white-space:nowrap}
+  .nada{background:var(--sup);border:1px dashed var(--linha);padding:15px;color:var(--fraco);font-size:13px}
+
+  /* REVISAO */
+  .rev{background:var(--sup);border:1px solid var(--amarela);padding:13px 16px}
+  .rev ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .rev li{display:flex;gap:12px;align-items:center;justify-content:space-between;
+          padding-bottom:8px;border-bottom:1px solid var(--linha);font-size:13.5px}
+  .rev li:last-child{border-bottom:0;padding-bottom:0}
+  .rev .q{font-size:11.5px;color:var(--fraco)}
+  .rev button{font:inherit;font-size:12px;padding:4px 10px;cursor:pointer;border:1px solid var(--linha);
+              background:var(--sup2);color:var(--texto);white-space:nowrap}
+  .rev button:hover{border-color:var(--amarela)}
+  .rev button.n{border-color:var(--alerta)}
+
+  /* PAINEIS */
+  .paineis{display:grid;grid-template-columns:1.1fr 1fr;gap:20px}
+  .painel{background:var(--sup);border:1px solid var(--linha);padding:16px 18px}
+  .fila{margin-bottom:12px}.fila:last-child{margin-bottom:0}
+  .fila .c{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+  .fila .c span{color:var(--fraco)}
+  .barra{display:flex;height:14px;background:var(--sup2);overflow:hidden}
+  .barra i{display:block;height:100%}
+  .ritmo{display:flex;align-items:flex-end;gap:6px;height:126px;padding-top:6px}
+  .ritmo div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;height:100%}
+  .ritmo i{display:block;width:100%;background:var(--azul);min-height:2px}
+  .ritmo i.z{background:var(--sup2)}
+  .ritmo small{font-size:10px;color:var(--apagado)}
+  .ritmo b{font-size:11.5px}
+  .nota{font-size:11.5px;color:var(--fraco);margin-top:12px;padding-top:10px;border-top:1px solid var(--linha)}
+  .leg{display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:var(--fraco);margin-top:12px;
+       padding-top:10px;border-top:1px solid var(--linha)}
+  .leg em{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+  .leg em i{width:9px;height:9px;display:block}
+
+  /* FILTROS + TABELA */
+  .filtros{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:13px}
+  .chip{font:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--linha);
+        background:var(--sup);cursor:pointer;color:var(--texto)}
+  .chip[aria-pressed="true"]{background:var(--texto);color:var(--fundo);border-color:var(--texto)}
+  .busca{flex:1;min-width:160px;font:inherit;font-size:13px;padding:6px 10px;
+         border:1px solid var(--linha);background:var(--sup);color:var(--texto)}
+  .sep{width:1px;height:20px;background:var(--linha)}
+  table{width:100%;border-collapse:collapse;background:var(--sup);border:1px solid var(--linha)}
+  th{text-align:left;font-size:11px;font-weight:600;color:var(--fraco);padding:9px 10px;
+     border-bottom:1px solid var(--linha);white-space:nowrap}
+  td{padding:8px 10px;border-bottom:1px solid var(--linha);vertical-align:top;font-size:13.5px}
+  tr:last-child td{border-bottom:0}
+  tr.feito .tit{color:var(--apagado);text-decoration:line-through}
+  tr.trava{background:#2A1E1E}
+  tr.bloq{opacity:.55}
+  .tit{font-weight:600;line-height:1.35}
+  .crit{font-size:11.5px;color:var(--fraco);line-height:1.4;margin-top:3px;max-width:390px}
+  .gat{font-size:11.5px;color:var(--amarela);margin-top:3px}
+  .tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 6px;color:#10151B;white-space:nowrap}
+  select,input[type=date],input[type=text]{font:inherit;font-size:12.5px;padding:4px 6px;
+    border:1px solid var(--linha);background:var(--sup2);color:var(--texto);width:100%}
+  td.mini{width:116px} td.txt{width:140px}
+  .destrava{font:inherit;font-size:11.5px;padding:4px 9px;cursor:pointer;
+            background:var(--sup2);color:var(--amarela);border:1px solid var(--amarela)}
+
+  .rodape{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px;
+          padding-top:15px;border-top:1px solid var(--linha)}
+  .rodape button{font:inherit;font-size:12.5px;padding:6px 12px;border:1px solid var(--linha);
+          background:var(--sup);cursor:pointer;color:var(--texto)}
+  .rodape button:hover{border-color:var(--texto)}
+  .aviso{font-size:12px;color:var(--fraco);margin-left:auto}
+  .lk{color:var(--azul);text-decoration:none;font-size:12px;font-weight:600;white-space:nowrap}
+  .lk:hover{text-decoration:underline}
+  :focus-visible{outline:2px solid var(--azul);outline-offset:1px}
+  @media (max-width:820px){
+    .paineis{grid-template-columns:1fr}
+    .crit,.gat{display:none}
+    td.mini,td.txt{width:auto}
+    .nums{gap:16px}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="env">
+  <div class="rank" id="rank"></div>
+
+  <section>
+    <h2>Treinar agora</h2>
+    <div class="grade" id="treinar"></div>
+  </section>
+
+  <section id="secrev" hidden>
+    <h2>Revisar hoje</h2>
+    <div class="rev"><ul id="revlista"></ul></div>
+  </section>
+
+  <section class="paineis">
+    <div class="painel">
+      <h2>Progresso por frente</h2>
+      <div id="frentes"></div>
+      <div class="leg">
+        <em><i style="background:#3FA57A"></i>Concluído</em>
+        <em><i style="background:#4C8FD1"></i>Treinando</em>
+        <em><i style="background:#D2544A"></i>Travei</em>
+        <em><i style="background:#232C37"></i>Não iniciado</em>
+      </div>
+    </div>
+    <div class="painel">
+      <h2>Ritmo das últimas 8 semanas</h2>
+      <div class="ritmo" id="ritmo"></div>
+      <div class="nota">Menos de 5 numa semana: a seguinte é de recuperação, sem assunto novo.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Todos os tópicos</h2>
+    <div class="filtros" id="filtros"></div>
+    <table>
+      <thead><tr>
+        <th>Tópico</th><th>Kyu</th><th>Frente</th><th>Sem.</th><th>Status</th>
+        <th>Prevista</th><th>Concluída</th><th>Arquivo</th><th>Notas</th>
+      </tr></thead>
+      <tbody id="corpo"></tbody>
+    </table>
+    <div class="rodape">
+      <button id="bkp">Baixar backup</button>
+      <button id="rst">Restaurar backup</button>
+      <input type="file" id="arq" accept=".json" hidden>
+      <span class="aviso" id="aviso">Tudo é salvo sozinho.</span>
+    </div>
+  </section>
+</div>
+
+<script>
+const DADOS = [{"id": 1, "t": "POO 30 — terminar o validar() da classe Credencial", "f": "POO", "sem": "S1", "c": "validar() devolve True/False comparando hashes, escrito sem consultar", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 2, "t": "POO — vídeo 31", "f": "POO", "sem": "S1", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 3, "t": "POO — vídeo 32", "f": "POO", "sem": "S1", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 4, "t": "POO — vídeo 33", "f": "POO", "sem": "S1", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 5, "t": "POO — vídeo 34", "f": "POO", "sem": "S1", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 6, "t": "POO — vídeo 35", "f": "POO", "sem": "S1", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 7, "t": "POO — vídeo 36", "f": "POO", "sem": "S1", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 8, "t": "POO — vídeo 37", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 9, "t": "POO — vídeo 38", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 10, "t": "POO — vídeo 39", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 11, "t": "POO — vídeo 40", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 12, "t": "POO — vídeo 41", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 13, "t": "POO — vídeo 42", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 14, "t": "POO — vídeo 43", "f": "POO", "sem": "S2", "c": "Vídeo assistido e desafio da aula resolvido sozinha", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 15, "t": "Fase 0 — ex193.py (principal do desafio 111)", "f": "POO", "sem": "S3", "c": "Programa roda com menu, usa o pacote e não repete código", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 16, "t": "Fase 0 — ex194.py (principal do desafio 112)", "f": "POO", "sem": "S3", "c": "Programa roda com menu, usa o pacote e não repete código", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 17, "t": "Fase 0 — refazer o R8 do zero", "f": "POO", "sem": "S3", "c": "Cadastro, exibição, filtro e campeão funcionando, sem consultar a resolução antiga", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 18, "t": "MARCO — controle remoto (desafio 22) sozinha", "f": "POO", "sem": "S3", "c": "Classe escrita do zero, sem vídeo e sem pedir código. Fecha a frente POO", "k": 2, "bloq": false, "gat": "", "link": ""}, {"id": 19, "t": "O que é um banco relacional: tabela, linha, coluna", "f": "SQL", "sem": "S1", "c": "Explicar por escrito o que é uma tabela sem usar a palavra 'planilha'", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 20, "t": "Chave primária", "f": "SQL", "sem": "S1", "c": "Explicar por que toda tabela precisa de uma e o que acontece sem ela", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 21, "t": "Chave estrangeira e relacionamento", "f": "SQL", "sem": "S1", "c": "Desenhar duas tabelas ligadas por FK e explicar a ligação", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 22, "t": "Instalar SQLite e DB Browser", "f": "SQL", "sem": "S1", "c": "Banco criado localmente, uma tabela visível na ferramenta", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 23, "t": "SELECT e FROM", "f": "SQL", "sem": "S2", "c": "10 consultas escritas sem consultar material", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 24, "t": "WHERE e operadores de comparação", "f": "SQL", "sem": "S2", "c": "10 consultas com filtro, sem consultar", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 25, "t": "AND, OR, NOT", "f": "SQL", "sem": "S2", "c": "Consulta com 3 condições combinadas, resultado conferido na mão", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 26, "t": "IN e BETWEEN", "f": "SQL", "sem": "S2", "c": "Reescrever um OR longo usando IN", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 27, "t": "LIKE e busca por texto", "f": "SQL", "sem": "S2", "c": "Buscar por começo, meio e fim de texto", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 28, "t": "NULL e IS NULL", "f": "SQL", "sem": "S2", "c": "Explicar por que = NULL não funciona e nem dá erro", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 29, "t": "ORDER BY", "f": "SQL", "sem": "S3", "c": "Ordenar por 2 colunas, uma crescente e outra decrescente", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 30, "t": "LIMIT", "f": "SQL", "sem": "S3", "c": "Trazer os 5 maiores de uma tabela", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 31, "t": "DISTINCT", "f": "SQL", "sem": "S3", "c": "Explicar a diferença entre COUNT(*) e COUNT(DISTINCT coluna)", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 32, "t": "Apelido com AS", "f": "SQL", "sem": "S3", "c": "Consulta legível com apelido em tabela e coluna", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 33, "t": "COUNT, SUM, AVG, MIN, MAX", "f": "SQL", "sem": "S3", "c": "Explicar por que COUNT(*) e COUNT(coluna) dão números diferentes", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 34, "t": "GROUP BY", "f": "SQL", "sem": "S4", "c": "Agrupar e conferir o total na mão, linha por linha", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 35, "t": "HAVING vs WHERE", "f": "SQL", "sem": "S4", "c": "Escrever a mesma pergunta das duas formas e explicar qual está certa e por quê", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 36, "t": "INNER JOIN", "f": "SQL", "sem": "S4", "c": "Juntar 2 tabelas e conferir a contagem de linhas", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 37, "t": "LEFT JOIN e o NULL do lado direito", "f": "SQL", "sem": "S4", "c": "Achar registros sem correspondência usando LEFT JOIN + IS NULL", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 38, "t": "JOIN que multiplica linhas", "f": "SQL", "sem": "S5", "c": "Reproduzir de propósito um SUM errado por duplicação e explicar a causa", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 39, "t": "JOIN de três tabelas", "f": "SQL", "sem": "S5", "c": "Consulta com 3 tabelas rodando e conferida", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 40, "t": "Subconsulta no WHERE", "f": "SQL", "sem": "S5", "c": "Resolver a mesma pergunta com subconsulta e com JOIN", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 41, "t": "WITH (CTE)", "f": "SQL", "sem": "S5", "c": "Reescrever uma subconsulta aninhada usando WITH", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 42, "t": "INSERT INTO", "f": "SQL", "sem": "S6", "c": "Inserir 20 registros de teste", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 43, "t": "UPDATE e o perigo do UPDATE sem WHERE", "f": "SQL", "sem": "S6", "c": "Explicar o que acontece sem WHERE e como testar antes com SELECT", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 44, "t": "DELETE", "f": "SQL", "sem": "S6", "c": "Apagar por condição, conferindo antes com SELECT", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 45, "t": "CREATE TABLE e tipos de dado", "f": "SQL", "sem": "S6", "c": "Criar do zero um banco com 3 tabelas ligadas", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 46, "t": "NOT NULL, UNIQUE, DEFAULT", "f": "SQL", "sem": "S6", "c": "Provocar o erro de cada restrição de propósito e ler a mensagem", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 47, "t": "Normalização básica", "f": "SQL", "sem": "S7", "c": "Pegar uma tabela bagunçada e separar em duas, explicando o motivo", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 48, "t": "Índice: por que uma consulta fica lenta", "f": "SQL", "sem": "S7", "c": "Explicar o que o banco faz sem índice e o que muda com ele", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 49, "t": "sqlite3 no Python: conectar e criar tabela", "f": "SQL", "sem": "S7", "c": "Script Python que cria o banco e a tabela ao rodar", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 50, "t": "sqlite3: INSERT com parâmetro (?)", "f": "SQL", "sem": "S8", "c": "Explicar por que NUNCA se monta SQL concatenando string", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 51, "t": "sqlite3: SELECT, fetchall e fetchone", "f": "SQL", "sem": "S8", "c": "Script que lê do banco e mostra formatado na tela", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 52, "t": "PROJETO — cadastro em SQLite com menu", "f": "SQL", "sem": "S8", "c": "CRUD completo em Python + SQLite, com menu, escrito sozinha. Fecha a Fase 1", "k": 3, "bloq": false, "gat": "", "link": ""}, {"id": 53, "t": "DSA — Big O: como medir custo", "f": "DSA + LeetCode", "sem": "S1", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 54, "t": "DSA — Array: operações e custo", "f": "DSA + LeetCode", "sem": "S2", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 55, "t": "DSA — String: operações e custo", "f": "DSA + LeetCode", "sem": "S3", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 56, "t": "DSA — Hashmap / dicionário", "f": "DSA + LeetCode", "sem": "S4", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 57, "t": "DSA — Two pointers", "f": "DSA + LeetCode", "sem": "S5", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 58, "t": "DSA — Sliding window", "f": "DSA + LeetCode", "sem": "S6", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 59, "t": "DSA — Pilha (stack)", "f": "DSA + LeetCode", "sem": "S7", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 60, "t": "DSA — Fila (queue)", "f": "DSA + LeetCode", "sem": "S8", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 61, "t": "DSA — Lista ligada", "f": "DSA + LeetCode", "sem": "S9", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 62, "t": "DSA — Busca binária", "f": "DSA + LeetCode", "sem": "S10", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 63, "t": "DSA — Recursão", "f": "DSA + LeetCode", "sem": "S11", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 64, "t": "DSA — Árvore binária", "f": "DSA + LeetCode", "sem": "S12", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 65, "t": "DSA — Algoritmos de ordenação", "f": "DSA + LeetCode", "sem": "S13", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 66, "t": "DSA — Heap / fila de prioridade", "f": "DSA + LeetCode", "sem": "S14", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 67, "t": "DSA — Grafo: representação e travessia", "f": "DSA + LeetCode", "sem": "S15", "c": "Aula assistida + 2 exercícios do LeetCode desse tema resolvidos e o padrão anotado no padroes.md", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 68, "t": "Roadmap — HTTP: requisição e resposta", "f": "Roadmap", "sem": "S9", "c": "Desenhar o caminho de uma requisição do navegador ao servidor", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 69, "t": "Roadmap — Métodos GET, POST, PUT, DELETE", "f": "Roadmap", "sem": "S9", "c": "Dizer qual método usar em 5 situações diferentes", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 70, "t": "Roadmap — Status codes: 200, 201, 400, 401, 404, 500", "f": "Roadmap", "sem": "S9", "c": "Explicar cada um com um exemplo real", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 71, "t": "Roadmap — JSON: ler e escrever no Python", "f": "Roadmap", "sem": "S9", "c": "Converter dicionário para JSON e voltar, salvando em arquivo", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 72, "t": "Roadmap — Biblioteca requests: primeiro GET", "f": "Roadmap", "sem": "S10", "c": "Consumir uma API pública e mostrar os dados formatados", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 73, "t": "Roadmap — Query string e cabeçalhos", "f": "Roadmap", "sem": "S10", "c": "Fazer requisição com parâmetro e com cabeçalho", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 74, "t": "Roadmap — PROJETO — consumir API e salvar em SQLite", "f": "Roadmap", "sem": "S10", "c": "Script que busca dados de uma API e grava no banco. Fecha a Fase 2", "k": 3, "bloq": false, "gat": "", "link": ""}, {"id": 75, "t": "Roadmap — .gitignore", "f": "Roadmap", "sem": "S11", "c": "Repositório sem arquivo que não devia estar versionado", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 76, "t": "Roadmap — Branch: criar, trocar, listar", "f": "Roadmap", "sem": "S11", "c": "Trabalhar uma feature inteira numa branch separada", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 77, "t": "Roadmap — Merge", "f": "Roadmap", "sem": "S11", "c": "Juntar uma branch na main sem erro", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 78, "t": "Roadmap — Resolver conflito de merge", "f": "Roadmap", "sem": "S11", "c": "Provocar um conflito de propósito e resolver na mão", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 79, "t": "Roadmap — Pull request no GitHub", "f": "Roadmap", "sem": "S11", "c": "Abrir e fechar um PR no próprio repositório", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 80, "t": "Roadmap — README decente no repositório", "f": "Roadmap", "sem": "S11", "c": "README que explica o que é, como rodar e o que faz. Fecha a Fase 3", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 81, "t": "Roadmap — O que é uma API e o que é FastAPI", "f": "Roadmap", "sem": "S12", "c": "Explicar a diferença entre API e site", "k": 7, "bloq": false, "gat": "", "link": ""}, {"id": 82, "t": "Roadmap — Primeira rota GET", "f": "Roadmap", "sem": "S12", "c": "Servidor rodando e respondendo no navegador", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 83, "t": "Roadmap — Pydantic: modelo de dados", "f": "Roadmap", "sem": "S12", "c": "Modelo que recusa dado com tipo errado", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 84, "t": "Roadmap — POST recebendo JSON", "f": "Roadmap", "sem": "S13", "c": "Rota que recebe JSON e devolve o que foi salvo", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 85, "t": "Roadmap — CRUD completo ligado ao SQLite", "f": "Roadmap", "sem": "S13", "c": "As 4 operações funcionando e gravando no banco", "k": 4, "bloq": false, "gat": "", "link": ""}, {"id": 86, "t": "Roadmap — Organização em pastas", "f": "Roadmap", "sem": "S14", "c": "Projeto separado em rotas, modelos e banco", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 87, "t": "Roadmap — Variáveis de ambiente (.env)", "f": "Roadmap", "sem": "S14", "c": "Nenhum dado sensível dentro do código", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 88, "t": "Roadmap — Documentação automática em /docs", "f": "Roadmap", "sem": "S14", "c": "Testar todas as rotas pela própria documentação", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 89, "t": "Roadmap — PROJETO — API completa", "f": "Roadmap", "sem": "S15", "c": "API com CRUD, banco e documentação, escrita sozinha. Fecha a Fase 4", "k": 3, "bloq": false, "gat": "", "link": ""}, {"id": 90, "t": "Roadmap — HTML básico", "f": "Roadmap", "sem": "S16", "c": "Página com formulário e lista", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 91, "t": "Roadmap — CSS básico", "f": "Roadmap", "sem": "S16", "c": "Página legível, sem framework", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 92, "t": "Roadmap — fetch consumindo a própria API", "f": "Roadmap", "sem": "S17", "c": "Tela que lê e grava pela API", "k": 6, "bloq": false, "gat": "", "link": ""}, {"id": 93, "t": "Roadmap — PROJETO FINAL — tela ligada à API", "f": "Roadmap", "sem": "S17", "c": "Sistema completo funcionando ponta a ponta. Fecha a Fase 5", "k": 2, "bloq": false, "gat": "", "link": ""}, {"id": 94, "t": "Testes — o que é um teste, por dentro", "f": "Ofício", "sem": "—", "c": "Escrever um teste na mão só com if e print, sem biblioteca", "k": 7, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 95, "t": "Testes — assert puro do Python", "f": "Ofício", "sem": "—", "c": "Explicar o que o assert faz quando passa e quando falha", "k": 7, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 96, "t": "Testes — instalar e rodar o pytest", "f": "Ofício", "sem": "—", "c": "pytest encontra e roda o arquivo test_*.py sozinho", "k": 6, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 97, "t": "Testes — testar função com return", "f": "Ofício", "sem": "—", "c": "5 testes para funções que você já tem no repositório", "k": 6, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 98, "t": "Testes — casos de borda", "f": "Ofício", "sem": "—", "c": "Testar lista vazia, zero, None e texto vazio na mesma função", "k": 5, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 99, "t": "Testes — exceção com pytest.raises", "f": "Ofício", "sem": "—", "c": "Testar o raise ValueError da classe Credencial", "k": 5, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 100, "t": "Testes — fixture", "f": "Ofício", "sem": "—", "c": "Fixture que cria o banco de teste e limpa no fim", "k": 4, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 101, "t": "Testes — testar código que usa banco", "f": "Ofício", "sem": "—", "c": "Testes rodando contra banco separado, sem sujar o real", "k": 4, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 102, "t": "Testes — testar rota de API", "f": "Ofício", "sem": "—", "c": "Testar uma rota com o TestClient do FastAPI", "k": 4, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 103, "t": "Testes — cobertura", "f": "Ofício", "sem": "—", "c": "Explicar por que 100% de cobertura não garante que o código está certo", "k": 4, "bloq": true, "gat": "o projeto de cadastro em SQLite começar", "link": ""}, {"id": 104, "t": "Leitura — escolher um projeto", "f": "Ofício", "sem": "—", "c": "Projeto Python, com testes, ativo, menos de 5 mil linhas", "k": 7, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 105, "t": "Leitura — rodar antes de ler", "f": "Ofício", "sem": "—", "c": "Projeto instalado e rodando na sua máquina", "k": 6, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 106, "t": "Leitura — mapear a estrutura", "f": "Ofício", "sem": "—", "c": "Desenhar as pastas no papel e dizer o que cada uma faz", "k": 6, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 107, "t": "Leitura — achar o ponto de entrada", "f": "Ofício", "sem": "—", "c": "Identificar por onde a execução começa", "k": 6, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 108, "t": "Leitura — seguir uma funcionalidade", "f": "Ofício", "sem": "—", "c": "Percorrer uma feature do início ao fim, anotando os arquivos", "k": 4, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 109, "t": "Leitura — histórico de um arquivo", "f": "Ofício", "sem": "—", "c": "git log de um arquivo e entender por que ele mudou", "k": 6, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 110, "t": "Leitura — ler um pull request fechado", "f": "Ofício", "sem": "—", "c": "Ler PR e discussão inteira, entender o que foi decidido e por quê", "k": 5, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 111, "t": "Leitura — ler os testes do projeto", "f": "Ofício", "sem": "—", "c": "Descrever o comportamento esperado só olhando os testes", "k": 5, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 112, "t": "Leitura — escrever o resumo", "f": "Ofício", "sem": "—", "c": "Um .md explicando como o projeto funciona, com suas palavras", "k": 5, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 113, "t": "Leitura — primeira contribuição", "f": "Ofício", "sem": "—", "c": "Abrir uma issue real ou corrigir a documentação", "k": 3, "bloq": true, "gat": "a frente POO fechar", "link": ""}, {"id": 114, "t": "Projeto — definir o escopo em fases", "f": "Ofício", "sem": "—", "c": "Escrever as 3 próximas versões, com o que entra em cada uma", "k": 6, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 115, "t": "Projeto — README que presta", "f": "Ofício", "sem": "—", "c": "Alguém consegue rodar o projeto sem te perguntar nada", "k": 6, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 116, "t": "Projeto — issues como backlog", "f": "Ofício", "sem": "—", "c": "10 issues abertas no GitHub, com etiqueta", "k": 6, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 117, "t": "Projeto — branch por funcionalidade", "f": "Ofício", "sem": "—", "c": "Nenhum commit direto na main por um mês", "k": 5, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 118, "t": "Projeto — testes desde o começo", "f": "Ofício", "sem": "—", "c": "Toda funcionalidade nova entra com teste junto", "k": 5, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 119, "t": "Projeto — primeiro refactor consciente", "f": "Ofício", "sem": "—", "c": "Reescrever uma parte sem mudar o comportamento, com os testes provando", "k": 4, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 120, "t": "Projeto — bug real corrigido direito", "f": "Ofício", "sem": "—", "c": "Teste que reproduz o bug primeiro, correção depois", "k": 4, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 121, "t": "Projeto — versionar e registrar mudanças", "f": "Ofício", "sem": "—", "c": "CHANGELOG.md com as versões e o que mudou", "k": 6, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 122, "t": "Projeto — colocar no ar", "f": "Ofício", "sem": "—", "c": "Rodando em algum lugar acessível por link", "k": 3, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 123, "t": "Projeto — retomar depois de parada", "f": "Ofício", "sem": "—", "c": "Voltar após 1 mês e produzir algo útil no mesmo dia", "k": 3, "bloq": true, "gat": "a API da Fase 4 ficar pronta", "link": ""}, {"id": 124, "t": "CS50 SQL — assistir e entregar os problem sets", "f": "Cursos", "sem": "—", "c": "Todos os problem sets do curso entregues", "k": 4, "bloq": false, "gat": "", "link": "https://cs50.harvard.edu/sql/"}, {"id": 125, "t": "CS50 SQL — projeto final", "f": "Cursos", "sem": "—", "c": "Projeto final entregue e certificado gratuito emitido pelo cs50.harvard.edu", "k": 2, "bloq": false, "gat": "", "link": "https://cs50.harvard.edu/sql/"}, {"id": 126, "t": "MySQL do Guanabara — apoio em português (opcional)", "f": "Cursos", "sem": "—", "c": "Só as aulas 1, 3-7 e 11-15. Pular 2a, 2b, 8, 9 e 10 (instalação de WAMP/XAMPP)", "k": 7, "bloq": false, "gat": "", "link": "https://www.youtube.com/playlist?list=PLHz_AreHm4dkBs-795Dsgvau_ekxg8g1r"}, {"id": 127, "t": "CS50W — semanas de HTML, CSS, JavaScript e Git", "f": "Cursos", "sem": "—", "c": "Problem sets dessas semanas entregues", "k": 4, "bloq": true, "gat": "o CS50 SQL terminar", "link": "https://cs50.harvard.edu/web/"}, {"id": 128, "t": "CS50W — semanas de Django, banco e ORM", "f": "Cursos", "sem": "—", "c": "Problem sets entregues. Comparar cada conceito com o equivalente em FastAPI", "k": 4, "bloq": true, "gat": "o CS50 SQL terminar", "link": "https://cs50.harvard.edu/web/"}, {"id": 129, "t": "CS50W — semanas de front-end, testes e escalabilidade", "f": "Cursos", "sem": "—", "c": "Problem sets entregues", "k": 4, "bloq": true, "gat": "o CS50 SQL terminar", "link": "https://cs50.harvard.edu/web/"}, {"id": 130, "t": "CS50W — projeto final", "f": "Cursos", "sem": "—", "c": "Projeto final entregue, no GitHub, com README que explique as decisões", "k": 2, "bloq": true, "gat": "o CS50 SQL terminar", "link": "https://cs50.harvard.edu/web/"}, {"id": 131, "t": "DECIDIR: seguir com Django do CS50W ou manter FastAPI", "f": "Cursos", "sem": "—", "c": "Decisão escrita, com o motivo. Não decidir isso antes de fazer a Fase 2", "k": 6, "bloq": true, "gat": "a Fase 2 do roadmap começar", "link": ""}, {"id": 132, "t": "CS50x — Scratch, C, arrays, algoritmos e memória", "f": "Cursos", "sem": "—", "c": "Problem sets dessas semanas entregues. A parte de C é a mais difícil dos 11 cursos", "k": 3, "bloq": true, "gat": "a API da Fase 4 estar no ar", "link": "https://cs50.harvard.edu/x/"}, {"id": 133, "t": "CS50x — Python, SQL, HTML, CSS e JavaScript", "f": "Cursos", "sem": "—", "c": "Problem sets entregues", "k": 4, "bloq": true, "gat": "a API da Fase 4 estar no ar", "link": "https://cs50.harvard.edu/x/"}, {"id": 134, "t": "CS50x — projeto final", "f": "Cursos", "sem": "—", "c": "Projeto final entregue e certificado gratuito emitido", "k": 2, "bloq": true, "gat": "a API da Fase 4 estar no ar", "link": "https://cs50.harvard.edu/x/"}, {"id": 135, "t": "CS50 Cybersecurity (opcional)", "f": "Cursos", "sem": "—", "c": "Curso completo. ~4h/semana por 5 semanas, sem pré-requisito", "k": 5, "bloq": true, "gat": "houver um slot livre", "link": "https://cs50.harvard.edu/cybersecurity/"}, {"id": 136, "t": "CS50 AI com Python (opcional)", "f": "Cursos", "sem": "—", "c": "Só faça se o assunto te interessar. Não é caminho para full stack", "k": 4, "bloq": true, "gat": "houver um slot livre", "link": ""}];
+const COR = {"POO":"#D2544A","SQL":"#2E9BA8","DSA + LeetCode":"#D19A2E","Roadmap":"#7A7FD6","Ofício":"#9B6FD4","Cursos":"#5FA88A"};
+const STATUS = ["Não iniciado","Treinando","Travei","Concluído"];
+const CHAVE = "dojo:estado";
+const XP = {8:2,7:4,6:8,5:16,4:32,3:64,2:128,1:256};
+const KCOR = {8:"#E8E4D9",7:"#E8E4D9",6:"#E3B341",5:"#E3B341",4:"#4C8FD1",3:"#4C8FD1",2:"#9B6FD4",1:"#9B6FD4"};
+const RANKS = [["8 kyu",0],["7 kyu",.05],["6 kyu",.12],["5 kyu",.22],["4 kyu",.35],
+               ["3 kyu",.50],["2 kyu",.68],["1 kyu",.85],["1 dan",1]];
+const INTERV = [7,30,90];
+
+let estado = {_dias:[]};
+let fFrente=null, fStatus=null, busca="";
+
+const hoje = () => new Date().toISOString().slice(0,10);
+const somaDias = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); };
+const est = id => estado[id] || (estado[id] = {s:"Não iniciado",p:"",c:"",a:"",n:"",rev:"",rn:0,ok:false});
+const liberado = d => !d.bloq || est(d.id).ok;
+
+// Guarda no window.storage quando existir; se o arquivo estiver aberto direto do
+// disco (file://), cai para o armazenamento do próprio navegador.
+const TEM_STORAGE = typeof window.storage !== "undefined" && window.storage !== null;
+
+async function lerStore(){
+  if(TEM_STORAGE){ const r = await window.storage.get(CHAVE); return r && r.value; }
+  return localStorage.getItem(CHAVE);
+}
+async function gravarStore(txt){
+  if(TEM_STORAGE) return window.storage.set(CHAVE, txt);
+  return localStorage.setItem(CHAVE, txt);
+}
+
+async function carregar(){
+  try{ const v = await lerStore(); if(v) estado = JSON.parse(v); }catch(e){}
+  if(!estado._dias) estado._dias = [];
+  desenhar();
+}
+let pend=null;
+function salvar(){
+  if(!estado._dias.includes(hoje())) estado._dias.push(hoje());
+  clearTimeout(pend);
+  pend = setTimeout(async()=>{
+    try{ await gravarStore(JSON.stringify(estado)); aviso("Salvo."); }
+    catch(e){ aviso("Não consegui salvar. Baixe um backup."); }
+  },350);
+}
+function aviso(t){
+  const el=document.getElementById("aviso"); el.textContent=t;
+  clearTimeout(el._t); el._t=setTimeout(()=>el.textContent="Tudo é salvo sozinho.",2200);
+}
+
+function sequencia(){
+  const dias = new Set(estado._dias||[]);
+  let n=0, d=hoje();
+  if(!dias.has(d)) d = somaDias(d,-1);
+  while(dias.has(d)){ n++; d = somaDias(d,-1); }
+  return n;
+}
+
+function faixaRank(){
+  const abertos = DADOS.filter(liberado);
+  const total = abertos.reduce((s,d)=>s+XP[d.k],0);
+  const meu   = abertos.filter(d=>est(d.id).s==="Concluído").reduce((s,d)=>s+XP[d.k],0);
+  const frac  = total ? meu/total : 0;
+  let i = 0; while(i<RANKS.length-1 && frac >= RANKS[i+1][1]) i++;
+  const base = RANKS[i][1]*total, prox = (RANKS[i+1] ? RANKS[i+1][1] : 1)*total;
+  const dentro = prox>base ? (meu-base)/(prox-base) : 1;
+  const cor = i<2?"var(--branca)":i<4?"var(--amarela)":i<6?"var(--azul)":i<8?"var(--roxa)":"var(--preta)";
+  document.getElementById("rank").style.setProperty("--rc",cor);
+  document.getElementById("rank").innerHTML = `
+    <div class="selo"><b>${RANKS[i][0].split(" ")[0]}</b><span>${RANKS[i][0].split(" ")[1].toUpperCase()}</span></div>
+    <div class="rinfo">
+      <div class="t">${RANKS[i][0]}</div>
+      <div class="p">${meu} de ${total} pontos de honra${RANKS[i+1]?" · faltam "+Math.max(0,Math.ceil(prox-meu))+" para "+RANKS[i+1][0]:" · faixa máxima"}</div>
+      <div class="trilho"><i style="width:${(dentro*100).toFixed(1)}%"></i></div>
+    </div>
+    <div class="nums">
+      <div class="fogo"><b>${sequencia()}</b><span>dias seguidos</span></div>
+      <div><b>${abertos.filter(d=>est(d.id).s==="Concluído").length}</b><span>concluídos</span></div>
+      <div><b>${abertos.filter(d=>est(d.id).s==="Travei").length}</b><span>travados</span></div>
+    </div>`;
+}
+
+function treinar(){
+  const alvo = document.getElementById("treinar");
+  const frentes = [...new Set(DADOS.filter(liberado).map(d=>d.f))];
+  alvo.innerHTML = frentes.map(fr=>{
+    const l = DADOS.filter(d=>d.f===fr && liberado(d));
+    const it = l.find(d=>est(d.id).s==="Treinando") || l.find(d=>est(d.id).s==="Não iniciado")
+            || l.find(d=>est(d.id).s==="Travei");
+    if(!it) return `<div class="kata" style="--f:${COR[fr]}"><div class="cab"><span class="fr">${fr}</span></div>
+      <div class="tp">Faixa completa</div><div class="cr">Todos os tópicos desta frente estão fechados.</div></div>`;
+    const e = est(it.id), treinando = e.s==="Treinando";
+    return `<div class="kata" style="--f:${COR[fr]}">
+      <div class="cab"><span class="fr">${fr}</span><span class="kyu" style="--k:${KCOR[it.k]}">${it.k} kyu</span></div>
+      <div class="tp">${it.t}</div><div class="cr">${it.c}</div>
+      ${it.link?`<a class="lk" href="${it.link}" target="_blank" rel="noopener">abrir curso ↗</a>`:""}
+      <button data-t="${it.id}">${treinando?"Passei — "+XP[it.k]+" honra":"Treinar"}</button></div>`;
+  }).join("");
+  alvo.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{
+    const e = est(b.dataset.t);
+    if(e.s==="Treinando"){ e.s="Concluído"; e.c=e.c||hoje(); e.rev=somaDias(hoje(),INTERV[0]); e.rn=0; }
+    else e.s="Treinando";
+    salvar(); desenhar();
+  });
+}
+
+function revisar(){
+  const fila = DADOS.filter(d=>{ const e=est(d.id); return e.s==="Concluído" && e.rev && e.rev<=hoje(); });
+  document.getElementById("secrev").hidden = !fila.length;
+  if(!fila.length) return;
+  document.getElementById("revlista").innerHTML = fila.map(d=>{
+    const e = est(d.id);
+    return `<li><div><div>${d.t}</div><div class="q">${d.c}</div></div>
+      <div style="display:flex;gap:6px">
+        <button data-r="${d.id}">Ainda sei</button>
+        <button class="n" data-f="${d.id}">Esqueci</button></div></li>`;
+  }).join("");
+  document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{
+    const e=est(b.dataset.r); e.rn=Math.min(e.rn+1,INTERV.length-1);
+    e.rev = e.rn>=INTERV.length-1 && e.rn!==0 ? somaDias(hoje(),INTERV[INTERV.length-1]) : somaDias(hoje(),INTERV[e.rn]);
+    salvar(); desenhar();
+  });
+  document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{
+    const e=est(b.dataset.f); e.s="Travei"; e.c=""; e.rev=""; e.rn=0;
+    salvar(); desenhar();
+  });
+}
+
+function frentes(){
+  const frs=[...new Set(DADOS.filter(liberado).map(d=>d.f))];
+  document.getElementById("frentes").innerHTML = frs.map(fr=>{
+    const l=DADOS.filter(d=>d.f===fr&&liberado(d)), t=l.length;
+    const q=s=>l.filter(d=>est(d.id).s===s).length;
+    const pc=v=>(v/t*100).toFixed(2)+"%";
+    return `<div class="fila"><div class="c"><b>${fr}</b><span>${q("Concluído")} de ${t}</span></div>
+      <div class="barra"><i style="width:${pc(q("Concluído"))};background:var(--ok)"></i>
+      <i style="width:${pc(q("Treinando"))};background:var(--azul)"></i>
+      <i style="width:${pc(q("Travei"))};background:var(--alerta)"></i></div></div>`;
+  }).join("");
+}
+
+function ritmo(){
+  const seg=new Date(); seg.setDate(seg.getDate()-((seg.getDay()+6)%7));
+  const s=[];
+  for(let i=7;i>=0;i--){
+    const a=new Date(seg); a.setDate(a.getDate()-i*7);
+    const b=new Date(a); b.setDate(b.getDate()+7);
+    s.push({i:a.toISOString().slice(0,10),f:b.toISOString().slice(0,10),
+      r:String(a.getDate()).padStart(2,"0")+"/"+String(a.getMonth()+1).padStart(2,"0"),n:0});
+  }
+  DADOS.forEach(d=>{const c=est(d.id).c; if(!c)return; const w=s.find(x=>c>=x.i&&c<x.f); if(w)w.n++;});
+  const alto=Math.max(5,...s.map(x=>x.n));
+  document.getElementById("ritmo").innerHTML=s.map(x=>
+    `<div><b>${x.n||""}</b><i class="${x.n?"":"z"}" style="height:${x.n/alto*100}%"></i><small>${x.r}</small></div>`).join("");
+}
+
+function filtros(){
+  const el=document.getElementById("filtros");
+  if(!el.dataset.p){
+    el.dataset.p=1;
+    el.innerHTML = Object.keys(COR).map(f=>`<button class="chip" data-fr="${f}">${f}</button>`).join("")
+      + `<span class="sep"></span>`
+      + STATUS.map(s=>`<button class="chip" data-st="${s}">${s}</button>`).join("")
+      + `<input class="busca" id="q" type="search" placeholder="Buscar tópico...">`;
+    el.querySelectorAll("[data-fr]").forEach(b=>b.onclick=()=>{fFrente=fFrente===b.dataset.fr?null:b.dataset.fr;desenhar();});
+    el.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{fStatus=fStatus===b.dataset.st?null:b.dataset.st;desenhar();});
+    el.querySelector("#q").oninput=e=>{busca=e.target.value.toLowerCase();tabela();};
+  }
+  el.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",
+    c.dataset.fr!==undefined?String(c.dataset.fr===fFrente):String(c.dataset.st===fStatus)));
+}
+
+function tabela(){
+  const vis=DADOS.filter(d=>(!fFrente||d.f===fFrente)&&(!fStatus||est(d.id).s===fStatus)
+    &&(!busca||(d.t+" "+d.c).toLowerCase().includes(busca)));
+  document.getElementById("corpo").innerHTML = vis.map(d=>{
+    const e=est(d.id), lib=liberado(d);
+    if(!lib) return `<tr class="bloq" data-id="${d.id}">
+      <td><div class="tit">${d.t}${d.link?` <a class="lk" href="${d.link}" target="_blank" rel="noopener">↗</a>`:""}</div><div class="gat">Destrava quando: ${d.gat}</div></td>
+      <td><span class="kyu" style="--k:${KCOR[d.k]}">${d.k} kyu</span></td>
+      <td><span class="tag" style="background:${COR[d.f]}">${d.f}</span></td>
+      <td colspan="6"><button class="destrava" data-u="${d.id}">Destravar agora</button></td></tr>`;
+    const cls=e.s==="Concluído"?"feito":e.s==="Travei"?"trava":"";
+    return `<tr class="${cls}" data-id="${d.id}">
+      <td><div class="tit">${d.t}${d.link?` <a class="lk" href="${d.link}" target="_blank" rel="noopener">↗</a>`:""}</div><div class="crit">${d.c}</div></td>
+      <td><span class="kyu" style="--k:${KCOR[d.k]}">${d.k} kyu</span></td>
+      <td><span class="tag" style="background:${COR[d.f]}">${d.f}</span></td>
+      <td style="font-size:11.5px;color:var(--fraco)">${d.sem}</td>
+      <td class="mini"><select data-k="s">${STATUS.map(s=>`<option ${s===e.s?"selected":""}>${s}</option>`).join("")}</select></td>
+      <td class="mini"><input type="date" data-k="p" value="${e.p}"></td>
+      <td class="mini"><input type="date" data-k="c" value="${e.c}"></td>
+      <td class="txt"><input type="text" data-k="a" value="${e.a}" placeholder="caminho"></td>
+      <td class="txt"><input type="text" data-k="n" value="${e.n}" placeholder="—"></td></tr>`;
+  }).join("") || `<tr><td colspan="9"><div class="nada">Nenhum tópico com esses filtros.</div></td></tr>`;
+
+  document.querySelectorAll("#corpo [data-u]").forEach(b=>b.onclick=()=>{
+    est(b.dataset.u).ok=true; salvar(); desenhar(); });
+  document.querySelectorAll("#corpo [data-k]").forEach(c=>c.onchange=()=>{
+    const e=est(c.closest("tr").dataset.id);
+    e[c.dataset.k]=c.value;
+    if(c.dataset.k==="s"){
+      if(c.value==="Concluído"){ if(!e.c)e.c=hoje(); if(!e.rev){e.rev=somaDias(hoje(),INTERV[0]);e.rn=0;} }
+      else { e.c=""; e.rev=""; e.rn=0; }
+    }
+    salvar(); desenhar();
+  });
+}
+
+function desenhar(){ faixaRank(); treinar(); revisar(); frentes(); ritmo(); filtros(); tabela(); }
+
+document.getElementById("bkp").onclick=()=>{
+  const b=new Blob([JSON.stringify(estado,null,1)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b);
+  a.download="backup-dojo-"+hoje()+".json"; a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById("rst").onclick=()=>document.getElementById("arq").click();
+document.getElementById("arq").onchange=ev=>{
+  const f=ev.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ estado=JSON.parse(r.result); if(!estado._dias)estado._dias=[];
+    salvar(); desenhar(); aviso("Backup restaurado."); }catch(e){ aviso("Arquivo inválido."); } };
+  r.readAsText(f);
+};
+
+carregar();
+</script>
